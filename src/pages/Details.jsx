@@ -26,7 +26,7 @@ import { ArrowLeft, ArrowLeftFromLineIcon, ArrowLeftIcon } from "lucide-react";
 export default function Details() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { updateInvoices } = useAppStore();
+  const { updateInvoices, setSheetOpen, setEditedData } = useAppStore();
 
   const [loading, setLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -80,7 +80,12 @@ export default function Details() {
       });
   }
 
-  if (loading) return <p>Yuklanmoqda...</p>;
+  function handleEdit(data) {
+    setSheetOpen();
+    setEditedData(data);
+  }
+
+  if (loading) return <p>Loading... :)</p>;
   if (error) return <p>Xatolik: {error}</p>;
 
   return (
@@ -88,13 +93,17 @@ export default function Details() {
       <div className="py-[64px]">
         <div className="mx-auto px-6 sm:px-15 md:px-10 w-full min-w-[327px] sm:min-w-[688px] md:max-w-[800px] flex flex-col gap-4 md:gap-6">
           <div
+            data-aos="fade-right"
             className="flex items-center gap-6 cursor-pointer"
             onClick={() => navigate("/")}
           >
             <img src="./ArroeLeft.svg" alt="arrow left" />
-            <h3>Go back</h3>
+            <h3 className="font-bold">Go back</h3>
           </div>
-          <Card className="p-[24px] sm:py-[20px] sm:px-[32px] md:py-[20px] md:px-[32px]">
+          <Card
+            className="p-[24px] sm:py-[20px] sm:px-[32px] md:py-[20px] md:px-[32px]"
+            data-aos="flip-up"
+          >
             <CardContent className="flex items-center justify-between">
               <div className="flex items-center justify-between w-full sm:w-0 md:w-0 sm:gap-4 md:gap-4">
                 <span className="text-[var(--senderAddress)]">Status: </span>
@@ -102,7 +111,11 @@ export default function Details() {
               </div>
 
               <div className="hidden sm:flex sm:gap-2 sm:items-center md:flex md:gap-2 md:items-center">
-                <Button className="cursor-pointer" variant="ghost">
+                <Button
+                  onClick={() => handleEdit(invoice)}
+                  className="cursor-pointer"
+                  variant="ghost"
+                >
                   Edit
                 </Button>
                 <Dialog>
@@ -149,7 +162,10 @@ export default function Details() {
           </Card>
 
           {/* Invoice Ma'lumotlari */}
-          <Card className="p-[24px] sm:p-[32px] md:p-[48px] gap-0">
+          <Card
+            className="p-[24px] sm:p-[32px] md:p-[48px] gap-0"
+            data-aos="zoom-in-up"
+          >
             {/* header start */}
             <CardHeader className="flex flex-col sm:flex-row md:flex-row sm:justify-between mb-[31px] sm:mb-[21px] md:mb-[21px]">
               <div className="flex flex-col gap-1 mb-[30px] sm:mb-0 md:mb-0">
@@ -319,6 +335,7 @@ export default function Details() {
 
       <div className="sm:hidden md:hidden bg-card py-[22px] px-[24px] flex justify-center gap-2 mx-auto">
         <Button
+          onClick={() => handleEdit(invoice)}
           className="cursor-pointer bg-[var(--details-card-bg)] text-[var(--muted)]"
           variant="ghost"
         >

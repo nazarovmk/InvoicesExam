@@ -5,6 +5,18 @@ export const useAppStore = create((set) => ({
   invoices: [],
   themes: ["default", "rose", "blue"],
   items: [],
+  sheetOpen: false,
+  editedData: null,
+  setEditedData(editedData) {
+    return set(() => {
+      return { editedData };
+    });
+  },
+  setSheetOpen() {
+    return set((state) => {
+      return { sheetOpen: !state.sheetOpen };
+    });
+  },
   setInvoices: (updater) =>
     set((state) => ({
       invoices:

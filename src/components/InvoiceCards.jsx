@@ -36,8 +36,8 @@ export default function InvoiceCards() {
   }
 
   return (
-    <div className="base-container flex flex-col gap-4 pt-[32px] sm:pt-[56px] md:pt-[65px]">
-      {invoices.map((el) => {
+    <div className="base-container overflow-visible flex flex-col gap-4 pt-[32px] sm:pt-[56px] md:pt-[65px]">
+      {invoices.map((el, index) => {
         const { createdAt, clientName, total, status, id } = el;
         return (
           <MyCard

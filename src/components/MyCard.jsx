@@ -17,7 +17,7 @@ export default function MyCard({
       onClick={() => {
         navigate(`/${id}`);
       }}
-      className="transform transition duration-200 hover:-translate-y-1 hover:shadow-md"
+      className="transform transition duration-500 hover:-translate-y-1 hover:shadow-md"
     >
       <div className="hidden sm:flex items-center justify-between rounded-[8px] px-[32px] cursor-pointer">
         <CardTitle className="min-w-[80px] text-base">#{id}</CardTitle>

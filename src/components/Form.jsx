@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useAppStore } from "../lib/zustand";
-import { addInvoices } from "../request";
+import { addInvoices, updateById } from "../request";
 import ItemList from "./ItemList";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { Card } from "./ui/card";
 import {
   Select,
   SelectContent,
@@ -22,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 export default function Form({ info, setSheetOpen }) {
   const { items: zustandItems } = useAppStore();
   const setInvoices = useAppStore((state) => state.setInvoices);
+  const updateInvoices = useAppStore((state) => state.updateInvoices);
   const navigate = useNavigate();
 
   const [sending, setSending] = useState(null);
@@ -30,7 +30,8 @@ export default function Form({ info, setSheetOpen }) {
   function handleSubmit(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const result = { status: e.nativeEvent.submitter.id };
+    const result = {};
+    result.status = info ? info.status : e.nativeEvent.submitter.id;
 
     formData.forEach((value, key) => {
       result[key] = ["quantity", "price", "paymentTerms"].includes(key)
@@ -39,16 +40,24 @@ export default function Form({ info, setSheetOpen }) {
     });
 
     result.items = zustandItems;
-    setSending(prepareData(result));
+    setSending(prepareData(result)); // Preparing data for submission
   }
 
   useEffect(() => {
     if (!sending) return;
     setLoading(true);
-    addInvoices(sending)
-      .then((newInvoice) => {
-        setInvoices((prev) => [...prev, newInvoice]);
-        toast.success("Ma'lumot qo'shildi");
+
+    const request = info ? updateById(info.id, sending) : addInvoices(sending);
+
+    request
+      .then((updatedOrNewInvoice) => {
+        if (info) {
+          updateInvoices(updatedOrNewInvoice);
+          toast.success("Ma'lumot yangilandi");
+        } else {
+          setInvoices((prev) => [...prev, updatedOrNewInvoice]);
+          toast.success("Ma'lumot qo'shildi");
+        }
         setSheetOpen(false);
         navigate("/");
       })
@@ -59,7 +68,7 @@ export default function Form({ info, setSheetOpen }) {
         setLoading(false);
         setSending(null);
       });
-  }, [sending, setInvoices, setSheetOpen, navigate]);
+  }, [sending, info, setInvoices, updateInvoices, setSheetOpen, navigate]);
 
   return (
     <form
@@ -70,7 +79,11 @@ export default function Form({ info, setSheetOpen }) {
       <div className="mb-10">
         <h3 className="font-bold text-[12px] mb-6 text-accent">Bill From</h3>
         <div className="flex flex-col gap-6">
-          <div className="grid w-full max-w-full items-center gap-2.5">
+          <div
+            className="grid w-full max-w-full items-center gap-2.5"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
             <Label
               className="text-[12px] text-muted"
               htmlFor="senderAddress-street"
@@ -82,13 +95,17 @@ export default function Form({ info, setSheetOpen }) {
               type="text"
               id="senderAddress-street"
               name="senderAddress-street"
-              defaultValue={info?.senderAddress.street}
+              defaultValue={info ? info.senderAddress?.street : ""}
               placeholder="Street Address"
             />
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-            <div className="grid w-full max-w-full items-center gap-2.5">
+            <div
+              className="grid w-full max-w-full items-center gap-2.5"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
               <Label
                 className="text-[12px] text-muted"
                 htmlFor="senderAddress-city"
@@ -100,12 +117,16 @@ export default function Form({ info, setSheetOpen }) {
                 type="text"
                 id="senderAddress-city"
                 name="senderAddress-city"
-                defaultValue={info?.senderAddress.city}
+                defaultValue={info ? info.senderAddress?.city : ""}
                 placeholder="City"
               />
             </div>
 
-            <div className="grid w-full max-w-full items-center gap-2.5">
+            <div
+              className="grid w-full max-w-full items-center gap-2.5"
+              data-aos="fade-up"
+              data-aos-delay="400"
+            >
               <Label
                 className="text-[12px] text-muted"
                 htmlFor="senderAddress-postCode"
@@ -117,12 +138,16 @@ export default function Form({ info, setSheetOpen }) {
                 type="text"
                 id="senderAddress-postCode"
                 name="senderAddress-postCode"
-                defaultValue={info?.senderAddress.postCode}
+                defaultValue={info ? info.senderAddress?.postCode : ""}
                 placeholder="Post Code"
               />
             </div>
 
-            <div className="grid w-full max-w-full items-center gap-2.5">
+            <div
+              className="grid w-full max-w-full items-center gap-2.5"
+              data-aos="fade-up"
+              data-aos-delay="500"
+            >
               <Label
                 className="text-[12px] text-muted"
                 htmlFor="senderAddress-country"
@@ -134,7 +159,7 @@ export default function Form({ info, setSheetOpen }) {
                 type="text"
                 id="senderAddress-country"
                 name="senderAddress-country"
-                defaultValue={info?.senderAddress.country}
+                defaultValue={info ? info.senderAddress?.country : ""}
                 placeholder="Country"
               />
             </div>
@@ -143,10 +168,14 @@ export default function Form({ info, setSheetOpen }) {
       </div>
 
       {/* Bill To */}
-      <div className="mb-10">
+      <div className="mb-10" data-aos="fade-up" data-aos-delay="200">
         <h3 className="font-bold text-[12px] mb-6 text-accent">Bill To</h3>
         <div className="flex flex-col gap-4">
-          <div className="grid w-full max-w-full items-center gap-2.5">
+          <div
+            className="grid w-full max-w-full items-center gap-2.5"
+            data-aos="fade-up"
+            data-aos-delay="300"
+          >
             <Label className="text-[12px] text-muted" htmlFor="clientName">
               Client’s Name
             </Label>
@@ -155,12 +184,16 @@ export default function Form({ info, setSheetOpen }) {
               type="text"
               id="clientName"
               name="clientName"
-              defaultValue={info?.clientName}
+              defaultValue={info ? info.clientName : ""}
               placeholder="Client’s Name"
             />
           </div>
 
-          <div className="grid w-full max-w-full items-center gap-2.5">
+          <div
+            className="grid w-full max-w-full items-center gap-2.5"
+            data-aos="fade-up"
+            data-aos-delay="400"
+          >
             <Label className="text-[12px] text-muted" htmlFor="clientEmail">
               Client’s Email
             </Label>
@@ -169,12 +202,16 @@ export default function Form({ info, setSheetOpen }) {
               type="email"
               id="clientEmail"
               name="clientEmail"
-              defaultValue={info?.clientEmail}
+              defaultValue={info ? info.clientEmail : ""}
               placeholder="Client’s Email"
             />
           </div>
 
-          <div className="grid w-full max-w-full items-center gap-2.5">
+          <div
+            className="grid w-full max-w-full items-center gap-2.5"
+            data-aos="fade-up"
+            data-aos-delay="500"
+          >
             <Label
               className="text-[12px] text-muted"
               htmlFor="clientAddress-street"
@@ -186,13 +223,17 @@ export default function Form({ info, setSheetOpen }) {
               type="text"
               id="clientAddress-street"
               name="clientAddress-street"
-              defaultValue={info?.clientAddress.street}
+              defaultValue={info ? info.clientAddress?.street : ""}
               placeholder="Street Address"
             />
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="grid w-full max-w-full items-center gap-2.5">
+            <div
+              className="grid w-full max-w-full items-center gap-2.5"
+              data-aos="fade-up"
+              data-aos-delay="600"
+            >
               <Label
                 className="text-[12px] text-muted"
                 htmlFor="clientAddress-city"
@@ -204,12 +245,16 @@ export default function Form({ info, setSheetOpen }) {
                 type="text"
                 id="clientAddress-city"
                 name="clientAddress-city"
-                defaultValue={info?.clientAddress.city}
+                defaultValue={info ? info.clientAddress?.city : ""}
                 placeholder="City"
               />
             </div>
 
-            <div className="grid w-full max-w-full items-center gap-2.5">
+            <div
+              className="grid w-full max-w-full items-center gap-2.5"
+              data-aos="fade-up"
+              data-aos-delay="700"
+            >
               <Label
                 className="text-[12px] text-muted"
                 htmlFor="clientAddress-postCode"
@@ -221,12 +266,16 @@ export default function Form({ info, setSheetOpen }) {
                 type="text"
                 id="clientAddress-postCode"
                 name="clientAddress-postCode"
-                defaultValue={info?.clientAddress.postCode}
+                defaultValue={info ? info.clientAddress?.postCode : ""}
                 placeholder="Post Code"
               />
             </div>
 
-            <div className="grid w-full max-w-full items-center gap-2.5">
+            <div
+              className="grid w-full max-w-full items-center gap-2.5"
+              data-aos="fade-up"
+              data-aos-delay="800"
+            >
               <Label
                 className="text-[12px] text-muted"
                 htmlFor="clientAddress-country"
@@ -238,7 +287,7 @@ export default function Form({ info, setSheetOpen }) {
                 type="text"
                 id="clientAddress-country"
                 name="clientAddress-country"
-                defaultValue={info?.clientAddress.country}
+                defaultValue={info ? info.clientAddress?.country : ""}
                 placeholder="Country"
               />
             </div>
@@ -258,19 +307,19 @@ export default function Form({ info, setSheetOpen }) {
               type="date"
               id="createdAt"
               name="createdAt"
-              defaultValue={info?.createdAt}
+              defaultValue={info ? info.createdAt : ""}
             />
           </div>
           <div className="grid w-full items-center gap-2.5">
             <label
-              htmlFor="paymentTerms text-muted"
+              htmlFor="paymentTerms"
               className="text-[12px] font-medium text-muted"
             >
               Payment Terms
             </label>
             <Select
               name="paymentTerms"
-              defaultValue={info?.paymentTerms?.toString()}
+              defaultValue={info ? info.paymentTerms?.toString() : ""}
             >
               <SelectTrigger
                 id="paymentTerms"
@@ -300,7 +349,7 @@ export default function Form({ info, setSheetOpen }) {
             type="text"
             id="description"
             name="description"
-            defaultValue={info?.description}
+            defaultValue={info ? info.description : ""}
             placeholder="Project Description"
           />
         </div>
@@ -311,8 +360,14 @@ export default function Form({ info, setSheetOpen }) {
       <div className="flex justify-end gap-2.5">
         {info ? (
           <>
-            <Button variant="outline">Cancel</Button>
-            <Button disabled={loading}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setSheetOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={loading}>
               {loading ? "Loading..." : "Save Changes"}
             </Button>
           </>
@@ -321,24 +376,17 @@ export default function Form({ info, setSheetOpen }) {
             <Button
               type="button"
               variant="outline"
-              className="sm:mr-auto rounded-3xl py-[17px] px-[17px] sm:py-[20px] sm:px-[24px] md:py-[20px] md:px-[24px] font-bold text-[12px] cursor-pointer bg-[var(--input-btn)] text-[var(--muted-btn)]"
+              className="sm:mr-auto rounded-3xl py-[17px] px-[17px] sm:py-[20px] sm:px-[24px] md:py-[20px] md:px-[24px]"
+              onClick={() => setSheetOpen(false)}
             >
-              Discard
+              Cancel
             </Button>
             <Button
-              className="rounded-3xl py-[17px] px-[17px] sm:py-[20px] sm:px-[24px] md:py-[20px] md:px-[24px] font-bold text-[12px] cursor-pointer"
-              id="draft"
-              variant="secondary"
+              type="submit"
+              className="rounded-3xl py-[17px] px-[17px] sm:py-[20px] sm:px-[24px] md:py-[20px] md:px-[24px]"
               disabled={loading}
             >
-              {loading ? "Loading..." : "Save as draft"}
-            </Button>
-            <Button
-              className="rounded-3xl py-[17px] px-[17px] sm:py-[20px] sm:px-[24px] md:py-[20px] md:px-[24px] font-bold text-[12px] cursor-pointer"
-              id="pending"
-              disabled={loading}
-            >
-              {loading ? "Loading..." : "Save & Send"}
+              {loading ? "Loading..." : "Save"}
             </Button>
           </div>
         )}

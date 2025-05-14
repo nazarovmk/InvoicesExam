@@ -13,11 +13,11 @@ function App() {
           path: "/",
           element: <Home />,
         },
+        {
+          path: "/:id",
+          element: <Details />,
+        },
       ],
-    },
-    {
-      path: "/:id",
-      element: <Details />,
     },
   ]);
   return <RouterProvider router={routes} />;

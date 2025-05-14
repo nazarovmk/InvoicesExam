@@ -60,11 +60,11 @@ export default function ThemesToggle() {
     <div className="flex gap-5 md:flex-col">
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <Button className="cursor-pointer" variant="ghost">
+          <Button className="cursor-pointer">
             Themes <ArrowBigDown />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="md:!w-[103px] min-w-0">
+        <DropdownMenuContent className="md:!w-[103px] min-w-0 z-[999]">
           <DropdownMenuLabel>Themes</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <div className="flex flex-col">

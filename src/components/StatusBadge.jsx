@@ -19,17 +19,21 @@ export default function StatusBadge({ status = "draft" }) {
     },
   };
 
+  const allowedStatuses = ["draft", "paid", "pending"];
+  const safeStatus = allowedStatuses.includes(status) ? status : "draft";
+  const currentStyle = style[safeStatus];
+
   return (
     <span
       className={`${buttonVariants({
         variant: "outline",
       })} min-w-[104px] border-none`}
-      style={{ backgroundColor: style[status].bg }}
+      style={{ backgroundColor: currentStyle.bg }}
     >
       <span
-        className={`inline-block w-2 h-2 rounded-full ${style[status].dote}`}
+        className={`inline-block w-2 h-2 rounded-full ${currentStyle.dote}`}
       ></span>
-      <span className={`capitalize ${style[status].text}`}>{status}</span>
+      <span className={`capitalize ${currentStyle.text}`}>{safeStatus}</span>
     </span>
   );
 }

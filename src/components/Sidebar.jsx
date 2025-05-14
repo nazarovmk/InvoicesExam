@@ -2,7 +2,7 @@ import ThemesToggle from "./ThemesToggle";
 
 export default function Sidebar() {
   return (
-    <div className="pr-[32px] md:pr-0 w-full md:w-[103px] bg-[#373B53] h-auto md:h-screen flex justify-between rounded-none md:rounded-tr-[28px] md:rounded-br-[28px] md:flex-col">
+    <div className="pr-[32px] md:pr-0 w-full md:w-[103px] bg-[#373B53] h-auto md:h-screen flex justify-between rounded-none md:rounded-tr-[28px] md:rounded-br-[28px] md:flex-col md:z-[999] md:relative">
       <img
         className="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] md:w-[103px] md:h-[103px]"
         src="./logo.svg"

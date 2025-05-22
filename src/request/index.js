@@ -1,4 +1,4 @@
-const baseURL = import.meta.env.VITE_BASE_URL;
+const baseURL = "https://json-api.uz/api/project/fn35/invoices"; // import.meta.env.VITE_BASE_URL
 
 // All
 export async function getInvoices(query = "") {

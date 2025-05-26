@@ -1,58 +1,57 @@
-const baseURL = "https://json-api.uz/api/project/fn35/invoices";
+const baseURL = import.meta.env.VITE_BASE_URL;
 
-// Hammasini olish (status bo‘yicha filtr bilan)
+// All
 export async function getInvoices(query = "") {
   const req = await fetch(baseURL + (query ? `?status=${query}` : ""));
-  if (req.ok) {
+  if (req.status === 200) {
     const result = await req.json();
     return result.data;
   } else {
-    throw new Error("Something went wrong while fetching invoices.");
+    throw new Error("Something went wrong!");
   }
 }
 
-// ID orqali bitta invoice olish
+// Get by id
 export async function getInvoice(id) {
-  const req = await fetch(`${baseURL}/${id}`);
-  if (req.ok) {
+  const req = await fetch(baseURL + `/${id}`);
+  if (req.status === 200) {
     const result = await req.json();
     return result;
   } else {
-    throw new Error("Something went wrong while fetching invoice by ID.");
+    throw new Error("Something went wrong!");
   }
 }
 
-// ID orqali o‘chirish
+// Delete by id
 export async function deleteById(id) {
-  const req = await fetch(`${baseURL}/${id}`, {
+  const req = await fetch(baseURL + `/${id}`, {
     method: "DELETE",
   });
-  if (req.ok) {
+  if (req.status === 200) {
     return "success";
   } else {
-    throw new Error("Something went wrong while deleting invoice.");
+    throw new Error("Something went wrong!");
   }
 }
 
-// ID orqali yangilash
+// Update by id
 export async function updateById(id, newData) {
-  const req = await fetch(`${baseURL}/${id}`, {
+  const req = await fetch(baseURL + `/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(newData),
   });
-
-  if (req.ok) {
-    const result = await req.json();
+  if (req.status === 200) {
+    const result = req.json();
     return result;
   } else {
-    throw new Error("Something went wrong while updating invoice.");
+    throw new Error("Something went wrong!");
   }
 }
 
-// Yangi invoice qo‘shish
+// Add by id
 export async function addInvoices(data) {
   const req = await fetch(baseURL, {
     method: "POST",
@@ -61,11 +60,10 @@ export async function addInvoices(data) {
     },
     body: JSON.stringify(data),
   });
-
-  if (req.ok) {
-    const result = await req.json();
+  if (req.status === 200) {
+    const result = req.json();
     return result;
   } else {
-    throw new Error("Something went wrong while adding invoice.");
+    throw new Error("Something went wrong!");
   }
 }
